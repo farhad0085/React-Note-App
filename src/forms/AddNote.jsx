@@ -17,9 +17,10 @@ const AddNote = (props) => {
     const [notes, setNotes] = useState({
         id: createUUID(),
         title: '',
-        description: '',
-        errors: {}
+        description: ''
     })
+
+    const [errors, setErrors] = useState({})
 
 
 
@@ -34,24 +35,18 @@ const AddNote = (props) => {
         e.preventDefault()
 
         if (notes.title === '') {
-            setNotes({
-                ...notes,
-                errors: {
-                    ...notes.errors,
-                    title: "Title is missing"
-                }
+            setErrors({
+                ...errors,
+                title: "Title is missing"
             })
             return
         }
 
         if (notes.description === '') {
-            setNotes({
-                ...notes,
-                errors: {
-                    ...notes.errors,
-                    title: '',
-                    description: "Description is missing"
-                }
+            setErrors({
+                ...notes.errors,
+                title: '',
+                description: "Description is missing"
             })
             return
         }
@@ -84,10 +79,10 @@ const AddNote = (props) => {
                         onChange={handleChange}
                         value={notes.title}
                         type="text"
-                        className={notes.errors.title ? "form-control is-invalid" : "form-control"}
+                        className={errors.title ? "form-control is-invalid" : "form-control"}
                         id="title"
                         name="title" />
-                    <div className="invalid-feedback">{notes.errors.title}</div>
+                    <div className="invalid-feedback">{errors.title}</div>
                 </div>
 
                 <div className="form-group">
@@ -95,11 +90,11 @@ const AddNote = (props) => {
                     <textarea
                         onChange={handleChange}
                         value={notes.description}
-                        className={notes.errors.description ? "form-control is-invalid" : "form-control"}
+                        className={errors.description ? "form-control is-invalid" : "form-control"}
                         id="description"
                         name="description">
                     </textarea>
-                    <div className="invalid-feedback">{notes.errors.description}</div>
+                    <div className="invalid-feedback">{errors.description}</div>
                 </div>
 
                 <button className="btn btn-secondary capitalize">Add Note</button>
