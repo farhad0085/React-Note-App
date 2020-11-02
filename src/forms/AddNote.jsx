@@ -1,103 +1,111 @@
-import React from 'react'
-import { uuid } from 'uuidv4';
+import React, { useContext, useState } from 'react'
 import { NoteContext } from '../contexts/Note.context'
 import { Link } from 'react-router-dom'
 
-class AddNote extends React.Component {
+function createUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r && 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
-    static contextType = NoteContext
 
-    state = {
-        id: uuid(),
+const AddNote = (props) => {
+
+    const context = useContext(NoteContext)
+
+    const [notes, setNotes] = useState({
+        id: createUUID(),
         title: '',
         description: '',
         errors: {}
-    }
+    })
 
 
 
-    handleChange = event => {
-        this.setState({
+    const handleChange = event => {
+        setNotes({
+            ...notes,
             [event.target.name]: event.target.value
         })
     }
 
-    handleSubmit = e => {
+    const handleSubmit = e => {
         e.preventDefault()
 
-        if (this.state.title === '') {
-            this.setState({
+        if (notes.title === '') {
+            setNotes({
+                ...notes,
                 errors: {
-                    ...this.state.errors,
+                    ...notes.errors,
                     title: "Title is missing"
                 }
             })
             return
         }
 
-        if (this.state.description === '') {
-            this.setState({
+        if (notes.description === '') {
+            setNotes({
+                ...notes,
                 errors: {
-                    ...this.state.errors,
+                    ...notes.errors,
                     title: '',
                     description: "Description is missing"
                 }
             })
             return
         }
-        this.context.addNote({
-            id: this.state.id,
-            title: this.state.title,
-            description: this.state.description
+
+        context.addNote({
+            id: notes.id,
+            title: notes.title,
+            description: notes.description
         })
 
-        this.setState({
-            id: uuid(),
+        setNotes({
+            id: createUUID(),
             title: '',
             description: '',
             errors: {}
         })
 
-        this.props.history.push('/')
+        props.history.push('/')
 
     }
 
-    render() {
+    return (
+        <div className="my-4">
+            <h3 className="capitalize">Add new note <span className="float-right"><Link to="/" className="btn btn-danger">Cancel</Link></span></h3>
+            <hr />
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="title">Title</label>
+                    <input
+                        onChange={handleChange}
+                        value={notes.title}
+                        type="text"
+                        className={notes.errors.title ? "form-control is-invalid" : "form-control"}
+                        id="title"
+                        name="title" />
+                    <div className="invalid-feedback">{notes.errors.title}</div>
+                </div>
 
-        return (
-            <div className="my-4">
-                <h3 className="capitalize">Add new note <span className="float-right"><Link to="/" className="btn btn-danger">Cancel</Link></span></h3>
-                <hr />
-                <form onSubmit={this.handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="title">Title</label>
-                        <input
-                            onChange={this.handleChange}
-                            value={this.state.title}
-                            type="text"
-                            className={this.state.errors.title ? "form-control is-invalid" : "form-control"}
-                            id="title"
-                            name="title" />
-                        <div className="invalid-feedback">{this.state.errors.title}</div>
-                    </div>
+                <div className="form-group">
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                        onChange={handleChange}
+                        value={notes.description}
+                        className={notes.errors.description ? "form-control is-invalid" : "form-control"}
+                        id="description"
+                        name="description">
+                    </textarea>
+                    <div className="invalid-feedback">{notes.errors.description}</div>
+                </div>
 
-                    <div className="form-group">
-                        <label htmlFor="description">Description</label>
-                        <textarea
-                            onChange={this.handleChange}
-                            value={this.state.description}
-                            className={this.state.errors.description ? "form-control is-invalid" : "form-control"}
-                            id="description"
-                            name="description">
-                        </textarea>
-                        <div className="invalid-feedback">{this.state.errors.description}</div>
-                    </div>
-
-                    <button className="btn btn-secondary capitalize">Add Note</button>
-                </form>
-            </div>
-        )
-    }
+                <button className="btn btn-secondary capitalize">Add Note</button>
+            </form>
+        </div>
+    )
 }
 
 export default AddNote

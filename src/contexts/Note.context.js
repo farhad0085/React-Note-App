@@ -44,7 +44,7 @@ export class NoteProvider extends Component {
     componentDidMount() {
         let notes = JSON.parse(localStorage.getItem('notes'))
         notes = notes ? notes : []
-        console.log("Notes", notes);
+        
         this.setState({
             notes
         })
