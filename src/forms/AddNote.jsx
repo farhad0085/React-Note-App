@@ -13,6 +13,7 @@ function createUUID() {
 const AddNote = (props) => {
 
     const context = useContext(NoteContext)
+    console.log("Context", context);
 
     const [notes, setNotes] = useState({
         id: createUUID(),

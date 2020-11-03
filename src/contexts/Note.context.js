@@ -1,15 +1,16 @@
-import React, { Component, createContext } from 'react'
+import React, { useState, createContext, useEffect } from 'react'
 
 export const NoteContext = createContext()
 
-export class NoteProvider extends Component {
-    state = {
-        notes: [],
-        addNote: (data) => this.addNote(data),
-        removeNote: (id) => this.removeNote(id)
-    }
+export const NoteProvider = (props) => {
 
-    addNote = (data) => {
+    const [state, setState] = useState({
+        notes: [],
+        addNote: (data) => addNote(data),
+        removeNote: (id) => removeNote(id)
+    })
+
+    const addNote = data => {
 
         const note = {
             id: data.id,
@@ -17,44 +18,46 @@ export class NoteProvider extends Component {
             description: data.description
         }
 
-        const notes = [note, ...this.state.notes]
+        const notes = [note, ...state.notes]
 
         // replace old localstorage with new notes
         localStorage.setItem('notes', JSON.stringify(notes))
 
-        this.setState({
+        setState({
+            ...state,
             notes
         })
     }
 
 
-    removeNote = id => {
+    const removeNote = id => {
 
         // get new notes after removing that note
-        const notes = this.state.notes.filter(note => note.id !== id)
+        const notes = state.notes.filter(note => note.id !== id)
 
         // replace old localstorage with new notes
         localStorage.setItem('notes', JSON.stringify(notes))
 
-        this.setState({
-            notes: notes
-        })
-    }
-
-    componentDidMount() {
-        let notes = JSON.parse(localStorage.getItem('notes'))
-        notes = notes ? notes : []
-        
-        this.setState({
+        setState({
+            ...state,
             notes
         })
     }
 
-    render() {
-        return (
-            <NoteContext.Provider value={this.state}>
-                {this.props.children}
-            </NoteContext.Provider>
-        )
-    }
+    useEffect(() => {
+        let notes = JSON.parse(localStorage.getItem('notes'))
+        notes = notes ? notes : []
+        setState({
+            ...state,
+            notes
+        })
+    }, [])
+
+
+    return (
+        <NoteContext.Provider value={state}>
+            {props.children}
+        </NoteContext.Provider>
+    )
+
 }

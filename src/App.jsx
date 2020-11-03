@@ -9,26 +9,25 @@ import { Route, Switch } from 'react-router-dom';
 import { NoteProvider } from './contexts/Note.context'
 
 
-class App extends React.Component {
+const App = () => {
 
-    render() {
-        return (
-            <>
-                <Header />
-                <div className="container">
-                    <NoteProvider>
-                        <Switch>
-                            <Route exact path='/' component={Notes} />
-                            <Route path='/add' component={AddNote} />
-                            <Route path='/about' component={About} />
-                            <Route component={NotFound} />
-                        </Switch>
-                    </NoteProvider>
+    return (
+        <>
+            <Header />
+            <div className="container">
+                <NoteProvider>
+                    <Switch>
+                        <Route exact path='/' component={Notes} />
+                        <Route path='/add' component={AddNote} />
+                        <Route path='/about' component={About} />
+                        <Route component={NotFound} />
+                    </Switch>
+                </NoteProvider>
 
-                    <Footer />
-                </div>
-            </>
-        );
-    }
+                <Footer />
+            </div>
+        </>
+    );
 }
+
 export default App;
